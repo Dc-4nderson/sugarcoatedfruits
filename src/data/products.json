@@ -1,0 +1,34 @@
+[
+  {
+    "id": "candied-grapes",
+    "name": "Candied Grapes",
+    "emoji": "🍇",
+    "description": "Fresh grapes coated in a crunchy, colorful candy shell. Pick your count and flavor!",
+    "sizes": [
+      { "label": "6 Count",  "price": 5.00  },
+      { "label": "12 Count", "price": 10.00 },
+      { "label": "24 Count", "price": 15.00 }
+    ],
+    "flavors": ["Watermelon", "Strawberry", "Grape", "Blueberry"]
+  },
+  {
+    "id": "candied-pineapples",
+    "name": "Candied Pineapples",
+    "emoji": "🍍",
+    "description": "Fresh pineapple chunks with a sweet, crunchy candy coating. Tropical perfection!",
+    "sizes": [
+      { "label": "4 Count", "price": 12.00 }
+    ],
+    "flavors": ["Watermelon", "Strawberry", "Grape", "Blueberry"]
+  },
+  {
+    "id": "candied-strawberries",
+    "name": "Candied Strawberries",
+    "emoji": "🍓",
+    "description": "Juicy strawberries wrapped in a sweet candy shell. A crowd favorite!",
+    "sizes": [
+      { "label": "12 Count", "price": 10.00 }
+    ],
+    "flavors": ["Watermelon", "Strawberry", "Grape", "Blueberry"]
+  }
+]

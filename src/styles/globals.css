@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors */
+  --color-brand-pink:       #E91E8C;
+  --color-brand-pink-light: #FDE8F0;
+  --color-brand-pink-dark:  #B5145F;
+  --color-brand-hot-pink:   #FF2D9B;
+  --color-brand-green:      #5BBF2A;
+  --color-brand-red:        #E02020;
+  --color-brand-blue:       #2B8FD9;
+  --color-brand-purple:     #7B3FA0;
+  --color-brand-bg:         #FFF5F9;
+  --color-brand-text:       #3A1525;
+
+  /* Fonts */
+  --font-display: 'Baloo 2', cursive;
+  --font-body:    'Nunito', sans-serif;
+}
+
+/* Custom utilities */
+@layer utilities {
+  .shadow-pink    { box-shadow: 0 4px 20px rgba(233, 30, 140, 0.12); }
+  .shadow-pink-md { box-shadow: 0 8px 30px rgba(233, 30, 140, 0.22); }
+  .shadow-pink-lg { box-shadow: 0 14px 44px rgba(233, 30, 140, 0.35); }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+  .animate-logo-pop {
+    animation: logoPop 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+}
+
+@keyframes logoPop {
+  from { opacity: 0; transform: scale(0.75); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Base */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #FFF5F9;
+  color: #3A1525;
+  font-family: 'Nunito', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
