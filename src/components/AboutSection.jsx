@@ -22,13 +22,13 @@ export default function AboutSection() {
               Meet the Maker 👑
             </h2>
             <p className="text-brand-text/80 text-lg leading-relaxed">
-              Hi, I&rsquo;m <strong className="text-brand-pink">Amere</strong>! I started Sugar Coated
-              Fruitzz because I love making sweet treats for my family and friends. Every order is
-              handmade with love, using fresh fruit and premium candy coatings. Thank you for supporting
-              my small business!
+              Hi, I&rsquo;m <strong className="text-brand-pink">Amere</strong> &mdash; a 13-year-old
+              entrepreneur from Jacksonville, FL! I started Sugar Coated Fruitzz because I love making
+              sweet treats for my family and friends. Every order is handmade with love, using fresh
+              fruit and premium candy coatings. Thank you for supporting my small business!
             </p>
             <div className="flex flex-wrap gap-3 mt-6">
-              {['🍓 Handmade', '🏡 Jacksonville, FL', '✨ Made with love'].map(tag => (
+              {['🍓 Handmade', '🏡 Jacksonville, FL', '👑 Age 13', '✨ Made with love'].map(tag => (
                 <span key={tag} className="px-4 py-2 bg-white rounded-full text-brand-pink font-bold text-sm shadow-pink">
                   {tag}
                 </span>
