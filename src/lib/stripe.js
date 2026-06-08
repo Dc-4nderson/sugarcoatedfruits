@@ -1,22 +1,37 @@
-// TODO: Replace with live Stripe integration
-// Stripe Checkout Session will be created server-side
-// Required: VITE_STRIPE_PUBLIC_KEY env var and backend endpoint /api/create-checkout-session
-//
-// import { loadStripe } from '@stripe/stripe-js'
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
+import { loadStripe } from '@stripe/stripe-js'
+
+// Publishable key is safe to expose client-side
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 /**
- * Placeholder for Stripe Checkout payment.
- * Replace this with a real Stripe integration when ready.
+ * Creates a Stripe Checkout Session via the Vercel serverless function,
+ * then redirects the browser to Stripe's hosted checkout page.
  *
- * @param {Array}  cartItems        - Items currently in the cart
- * @param {Object} customerInfo     - { name, phone, email }
- * @param {string} fulfillmentType  - 'pickup' | 'delivery'
- * @param {Object} fulfillmentDetails - Address + date + notes
+ * @param {Array}  cartItems          - Items currently in the cart
+ * @param {Object} customerInfo       - { name, phone, email }
+ * @param {string} fulfillmentType    - 'pickup' | 'delivery'
+ * @param {Object} fulfillmentDetails - Address + date + notes + rushFee
  */
 export async function handlePayment(cartItems, customerInfo, fulfillmentType, fulfillmentDetails = {}) {
-  // TODO: Stripe Checkout integration — create /api/create-checkout-session endpoint
-  // TODO: Order confirmation SMS via Twilio
-  console.log('Stripe payment placeholder', { cartItems, customerInfo, fulfillmentType, fulfillmentDetails })
-  alert('Payment integration coming soon! For now, DM @sugarcoated.fruitzz on Instagram to place your order.')
+  const response = await fetch('/api/create-checkout-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      items: cartItems,
+      customer: customerInfo,
+      fulfillmentType,
+      fulfillmentDetails,
+      origin: window.location.origin,
+    }),
+  })
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}))
+    throw new Error(data.error || 'Failed to start checkout. Please try again.')
+  }
+
+  const { url } = await response.json()
+
+  // Redirect to Stripe's hosted checkout
+  window.location.href = url
 }
