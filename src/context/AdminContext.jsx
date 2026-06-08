@@ -28,6 +28,24 @@ export function AdminProvider({ children }) {
     localStorage.setItem('scf-custom-products', JSON.stringify(customProducts))
   }, [customProducts])
 
+  // Customer-submitted reviews stored in localStorage
+  const [userReviews, setUserReviews] = useState(
+    () => loadJSON('scf-user-reviews', [])
+  )
+
+  useEffect(() => {
+    localStorage.setItem('scf-user-reviews', JSON.stringify(userReviews))
+  }, [userReviews])
+
+  const addUserReview = (review) => {
+    const id = 'review-' + Date.now()
+    setUserReviews(prev => [{ ...review, id }, ...prev])
+  }
+
+  const deleteUserReview = (id) => {
+    setUserReviews(prev => prev.filter(r => r.id !== id))
+  }
+
   const login = (email, password) => {
     if (email.trim() === ADMIN_EMAIL && password.trim() === ADMIN_PASSWORD) {
       sessionStorage.setItem('scf-admin', '1')
@@ -57,6 +75,7 @@ export function AdminProvider({ children }) {
     <AdminContext.Provider value={{
       isLoggedIn, login, logout, loginError,
       customProducts, addCustomProduct, removeCustomProduct,
+      userReviews, addUserReview, deleteUserReview,
     }}>
       {children}
     </AdminContext.Provider>

@@ -57,6 +57,11 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-6 text-center text-white/25 text-xs space-y-1">
           <p>&copy; {new Date().getFullYear()} Sugar Coated Fruitzz by Amere. All rights reserved.</p>
           <p>Jacksonville, FL &middot; Made with ♥</p>
+          <p className="pt-2">
+            <a href="#admin" className="text-white/15 hover:text-white/40 transition-colors text-xs">
+              Admin
+            </a>
+          </p>
         </div>
       </div>
     </footer>

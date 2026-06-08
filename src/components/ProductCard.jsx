@@ -2,9 +2,15 @@ import { useState } from 'react'
 import FlavorSelector from './FlavorSelector'
 import { useCart } from '../context/CartContext'
 
+const PRODUCT_IMAGE = {
+  'candied-grapes':       '/images/grape.png',
+  'candied-pineapples':   '/images/pineapple.png',
+  'candied-strawberries': '/images/strawberry.png',
+}
+
 const PRODUCT_EMOJI = {
-  'candied-grapes': '🍇',
-  'candied-pineapples': '🍍',
+  'candied-grapes':       '🍇',
+  'candied-pineapples':   '🍍',
   'candied-strawberries': '🍓',
 }
 
@@ -29,9 +35,25 @@ export default function ProductCard({ product }) {
   return (
     <article className="bg-white rounded-3xl border-2 border-brand-pink-light shadow-pink p-5 md:p-6 flex flex-col gap-4 hover:-translate-y-1 hover:shadow-pink-lg transition-all duration-300 touch-manipulation">
 
-      {/* Emoji image */}
-      <div className="bg-gradient-to-br from-brand-pink-light to-pink-100 rounded-2xl h-28 md:h-36 flex items-center justify-center select-none">
-        <span className="text-6xl md:text-7xl" role="img" aria-label={product.name}>
+      {/* Product image */}
+      <div className="bg-gradient-to-br from-brand-pink-light to-pink-100 rounded-2xl h-28 md:h-36 flex items-center justify-center select-none overflow-hidden">
+        {PRODUCT_IMAGE[product.id] ? (
+          <img
+            src={PRODUCT_IMAGE[product.id]}
+            alt={product.name}
+            className="h-full w-full object-cover rounded-2xl"
+            onError={e => {
+              e.currentTarget.style.display = 'none'
+              e.currentTarget.nextSibling.style.display = 'flex'
+            }}
+          />
+        ) : null}
+        <span
+          className="text-6xl md:text-7xl"
+          role="img"
+          aria-label={product.name}
+          style={{ display: PRODUCT_IMAGE[product.id] ? 'none' : 'flex' }}
+        >
           {product._customEmoji ?? PRODUCT_EMOJI[product.id] ?? '🍬'}
         </span>
       </div>
