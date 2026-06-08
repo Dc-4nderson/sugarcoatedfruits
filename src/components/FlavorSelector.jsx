@@ -3,9 +3,12 @@ const FLAVOR_STYLES = {
   Strawberry: { pill: 'bg-pink-100 text-pink-600 border-pink-300 hover:bg-pink-200', ring: 'ring-pink-400'   },
   Grape:      { pill: 'bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-200', ring: 'ring-purple-400' },
   Blueberry:  { pill: 'bg-blue-100 text-blue-600 border-blue-300 hover:bg-blue-200', ring: 'ring-blue-400'   },
+  Original:   { pill: 'bg-amber-100 text-amber-700 border-amber-300 hover:bg-amber-200', ring: 'ring-amber-400' },
 }
 
-const FLAVOR_EMOJI = { Watermelon: '🍉', Strawberry: '🍓', Grape: '🍇', Blueberry: '🫐' }
+const DEFAULT_STYLE = { pill: 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200', ring: 'ring-gray-400' }
+
+const FLAVOR_EMOJI = { Watermelon: '🍉', Strawberry: '🍓', Grape: '🍇', Blueberry: '🫐', Original: '✨' }
 
 export default function FlavorSelector({ flavors, selected, onChange }) {
   return (
@@ -15,7 +18,7 @@ export default function FlavorSelector({ flavors, selected, onChange }) {
       </p>
       <div className="flex flex-wrap gap-2">
         {flavors.map(flavor => {
-          const s = FLAVOR_STYLES[flavor]
+          const s = FLAVOR_STYLES[flavor] ?? DEFAULT_STYLE
           const isSelected = selected === flavor
           return (
             <button

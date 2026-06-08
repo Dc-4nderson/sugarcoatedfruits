@@ -83,17 +83,26 @@ function ProductsTab() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-brand-text/60 mb-1">Sizes & Prices *</label>
-            <p className="text-xs text-brand-text/40 mb-2">
-              Label = what the customer sees (e.g. <span className="font-bold">6 count</span>, <span className="font-bold">12 count</span>, <span className="font-bold">Small bag</span>).
-              Price = dollar amount for that size. Add a row for each size option.
-            </p>
+            <label className="block text-xs font-bold text-brand-text/60 mb-2">Sizes & Prices *</label>
             <div className="space-y-2">
               {form.sizes.map((s, i) => (
-                <div key={s._key} className="flex gap-2 items-center">
-                  <input type="text" value={s.label} onChange={e => setSizeField(i, 'label', e.target.value)} placeholder="e.g. 6 count" className={`${inputClass} flex-1`} />
+                <div key={s._key} className="grid grid-cols-[1fr_auto_5rem_auto] gap-2 items-center">
+                  <input
+                    type="text"
+                    value={s.label}
+                    onChange={e => setSizeField(i, 'label', e.target.value)}
+                    placeholder="Label (e.g. 6 count)"
+                    className={inputClass}
+                  />
                   <span className="text-brand-text/40 font-bold">$</span>
-                  <input type="text" inputMode="decimal" value={s.price} onChange={e => setSizeField(i, 'price', e.target.value)} placeholder="0.00" className={`${inputClass} w-24`} />
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={s.price}
+                    onChange={e => setSizeField(i, 'price', e.target.value)}
+                    placeholder="0.00"
+                    className={inputClass}
+                  />
                   {form.sizes.length > 1 && (
                     <button type="button" onClick={() => removeSize(i)} className="text-red-400 hover:text-red-600 font-bold px-2 touch-manipulation">✕</button>
                   )}
@@ -209,6 +218,149 @@ function ReviewsTab() {
   )
 }
 
+function OrdersTab() {
+  const [orders, setOrders]   = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState('')
+  const [expanded, setExpanded] = useState(null)
+
+  const fetchOrders = () => {
+    setLoading(true)
+    setError('')
+    fetch('/api/orders')
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) throw new Error(data.error)
+        setOrders(data.orders)
+      })
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false))
+  }
+
+  useState(() => { fetchOrders() }, [])
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-20">
+        <div className="w-8 h-8 border-4 border-brand-pink border-t-transparent rounded-full animate-spin" />
+        <p className="text-brand-text/40 text-sm">Loading orders...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="border-2 border-red-200 bg-red-50 rounded-3xl py-12 flex flex-col items-center gap-3 px-6 text-center">
+        <span className="text-4xl">⚠️</span>
+        <p className="text-red-600 font-bold">Could not load orders</p>
+        <p className="text-red-400 text-sm">{error}</p>
+        <button type="button" onClick={fetchOrders} className="mt-2 px-5 py-2 bg-brand-pink text-white rounded-full font-bold text-sm touch-manipulation">
+          Retry
+        </button>
+      </div>
+    )
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="border-2 border-dashed border-brand-pink-light rounded-3xl py-16 flex flex-col items-center gap-3">
+        <span className="text-5xl">📦</span>
+        <p className="text-brand-text/40 text-sm">No completed orders yet</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-5">
+        <p className="text-brand-text/60 text-sm">{orders.length} paid order{orders.length !== 1 ? 's' : ''}</p>
+        <button type="button" onClick={fetchOrders} className="text-brand-pink text-sm font-bold hover:underline touch-manipulation">
+          ↻ Refresh
+        </button>
+      </div>
+      {orders.map(order => {
+        const isOpen = expanded === order.id
+        const date = new Date(order.created * 1000)
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+        return (
+          <div key={order.id} className="bg-white rounded-2xl border-2 border-brand-pink-light shadow-pink overflow-hidden">
+            {/* Summary row */}
+            <button
+              type="button"
+              onClick={() => setExpanded(isOpen ? null : order.id)}
+              className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 hover:bg-brand-pink-light/20 transition-colors touch-manipulation"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-brand-text">{order.customerName}</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                    order.fulfillmentType === 'delivery'
+                      ? 'bg-blue-100 text-blue-600'
+                      : 'bg-green-100 text-green-600'
+                  }`}>
+                    {order.fulfillmentType === 'delivery' ? '🚗 Delivery' : '🏪 Pickup'}
+                  </span>
+                </div>
+                <p className="text-xs text-brand-text/40 mt-0.5">{dateStr} at {timeStr}</p>
+              </div>
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="font-display font-bold text-brand-pink text-lg">${order.total.toFixed(2)}</span>
+                <span className="text-brand-text/30 text-sm">{isOpen ? '▲' : '▼'}</span>
+              </div>
+            </button>
+
+            {/* Expanded details */}
+            {isOpen && (
+              <div className="px-5 pb-5 border-t-2 border-brand-pink-light pt-4 space-y-4">
+                {/* Customer info */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-xs font-bold text-brand-text/40 uppercase tracking-wide mb-1">Customer</p>
+                    <p className="font-bold text-brand-text">{order.customerName}</p>
+                    {order.customerPhone !== '—' && <p className="text-brand-text/60">{order.customerPhone}</p>}
+                    {order.customerEmail !== '—' && <p className="text-brand-text/60">{order.customerEmail}</p>}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-brand-text/40 uppercase tracking-wide mb-1">Fulfillment</p>
+                    <p className="text-brand-text/80">
+                      {order.fulfillmentType === 'delivery' ? `📍 ${order.deliveryAddress}` : '🏪 Pickup'}
+                    </p>
+                    {order.preferredDate !== '—' && (
+                      <p className="text-brand-text/60 mt-1">📅 {order.preferredDate}</p>
+                    )}
+                    {order.notes && (
+                      <p className="text-brand-text/60 mt-1 italic">"{order.notes}"</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Line items */}
+                <div>
+                  <p className="text-xs font-bold text-brand-text/40 uppercase tracking-wide mb-2">Items</p>
+                  <div className="space-y-1">
+                    {order.lineItems.map((li, i) => (
+                      <div key={i} className="flex justify-between text-sm">
+                        <span className="text-brand-text/80">{li.name} × {li.quantity}</span>
+                        <span className="font-bold text-brand-pink">${li.amount.toFixed(2)}</span>
+                      </div>
+                    ))}
+                    <div className="border-t-2 border-brand-pink-light pt-2 flex justify-between font-bold mt-2">
+                      <span className="text-brand-text">Total</span>
+                      <span className="text-brand-pink font-display text-lg">${order.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-xs text-brand-text/25">Order ID: {order.id}</p>
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 export default function AdminDashboard() {
   const { logout } = useAdmin()
   const [tab, setTab] = useState('products')
@@ -243,7 +395,7 @@ export default function AdminDashboard() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-8 border-b-2 border-brand-pink-light">
-          {[['products', '🍬 Products'], ['reviews', '⭐ Reviews']].map(([key, label]) => (
+          {[['products', '🍬 Products'], ['reviews', '⭐ Reviews'], ['orders', '📦 Orders']].map(([key, label]) => (
             <button
               key={key}
               type="button"
@@ -261,6 +413,7 @@ export default function AdminDashboard() {
 
         {tab === 'products' && <ProductsTab />}
         {tab === 'reviews'  && <ReviewsTab />}
+        {tab === 'orders'   && <OrdersTab />}
       </main>
     </div>
   )
