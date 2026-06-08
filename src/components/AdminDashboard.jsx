@@ -9,7 +9,7 @@ function ProductsTab() {
   const { customProducts, addCustomProduct, removeCustomProduct } = useAdmin()
   const [form, setForm] = useState({
     name: '', description: '', emoji: '🍬',
-    sizes: [{ label: '', price: '' }],
+    sizes: [{ label: '', price: '', _key: Date.now() }],
     flavors: [],
   })
   const [showForm, setShowForm] = useState(false)
@@ -25,7 +25,7 @@ function ProductsTab() {
     })
   }
 
-  const addSize = () => setForm(p => ({ ...p, sizes: [...p.sizes, { label: '', price: '' }] }))
+  const addSize = () => setForm(p => ({ ...p, sizes: [...p.sizes, { label: '', price: '', _key: Date.now() }] }))
   const removeSize = (i) => setForm(p => ({ ...p, sizes: p.sizes.filter((_, j) => j !== i) }))
 
   const toggleFlavor = (f) => setForm(p => ({
@@ -42,7 +42,7 @@ function ProductsTab() {
     if (sizes.length === 0) { setError('Add at least one size with a price.'); return }
     if (form.flavors.length === 0) { setError('Select at least one flavor.'); return }
     addCustomProduct({ name: form.name.trim(), description: form.description.trim(), emoji: form.emoji || '🍬', sizes, flavors: form.flavors })
-    setForm({ name: '', description: '', emoji: '🍬', sizes: [{ label: '', price: '' }], flavors: [] })
+    setForm({ name: '', description: '', emoji: '🍬', sizes: [{ label: '', price: '', _key: Date.now() }], flavors: [] })
     setShowForm(false)
     setError('')
   }
@@ -90,7 +90,7 @@ function ProductsTab() {
             </p>
             <div className="space-y-2">
               {form.sizes.map((s, i) => (
-                <div key={i} className="flex gap-2 items-center">
+                <div key={s._key} className="flex gap-2 items-center">
                   <input type="text" value={s.label} onChange={e => setSizeField(i, 'label', e.target.value)} placeholder="e.g. 6 count" className={`${inputClass} flex-1`} />
                   <span className="text-brand-text/40 font-bold">$</span>
                   <input type="text" inputMode="decimal" value={s.price} onChange={e => setSizeField(i, 'price', e.target.value)} placeholder="0.00" className={`${inputClass} w-24`} />
